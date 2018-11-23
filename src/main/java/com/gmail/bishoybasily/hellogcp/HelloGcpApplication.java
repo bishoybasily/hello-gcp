@@ -15,6 +15,7 @@ public class HelloGcpApplication {
 
     @GetMapping
     public String hello() {
+        System.out.println("hit");
         return "hi";
     }
 
