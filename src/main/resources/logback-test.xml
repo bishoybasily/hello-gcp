@@ -1,0 +1,16 @@
+<configuration>
+    <appender name="CLOUD" class="com.google.cloud.logging.logback.LoggingAppender">
+        <!--&lt;!&ndash; Optional : filter logs at or above a level &ndash;&gt;-->
+        <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+        <!--<level>INFO</level>-->
+        <!--</filter>-->
+        <!--<log>application.log</log> &lt;!&ndash; Optional : default java.log &ndash;&gt;-->
+        <!--<resourceType>gae_app</resourceType> &lt;!&ndash; Optional : default: auto-detected, fallback: global &ndash;&gt;-->
+        <!--&lt;!&ndash;<enhancer>com.example.logging.logback.enhancers.ExampleEnhancer</enhancer> &lt;!&ndash; Optional &ndash;&gt;&ndash;&gt;-->
+        <!--<flushLevel>WARN</flushLevel> &lt;!&ndash; Optional : default ERROR &ndash;&gt;-->
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="CLOUD"/>
+    </root>
+</configuration>
