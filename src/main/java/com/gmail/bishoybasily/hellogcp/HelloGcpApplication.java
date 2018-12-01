@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,10 +41,9 @@ public class HelloGcpApplication {
         logger.severe("Logging ERROR with Logback");
 
         String projectId = ServiceOptions.getDefaultProjectId();
-        ProjectName projectName = ProjectName.of(projectId);
+
         reportError(projectId);
         reportSpan(projectId);
-
 
         return respones;
     }
@@ -63,8 +59,10 @@ public class HelloGcpApplication {
                     .setEndTime(Timestamps.fromMillis(System.currentTimeMillis()))
                     .build();
 
+            double randomValue = getRandomValue();
+
             TypedValue value = TypedValue.newBuilder()
-                    .setDoubleValue(123.45)
+                    .setDoubleValue(randomValue)
                     .build();
 
             Point point = Point.newBuilder()
@@ -113,6 +111,13 @@ public class HelloGcpApplication {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception dealing with stackdriver", e);
         }
+    }
+
+    private double getRandomValue() {
+        double rangeMin = 100, rangeMax = 200;
+
+        Random r = new Random();
+        return rangeMin + (rangeMax - rangeMin) * r.nextDouble();
     }
 
     private void reportError(String projectId) {
