@@ -33,9 +33,17 @@ public class HelloGcpApplication {
 
     private String template = "Hello, %s";
 
+    private Map<String, Integer> namesCounter = new HashMap<>();
+
     @GetMapping
     public String hello(@RequestParam(required = false, value = "name") String name) {
-        String respones = String.format(template, name == null ? "user" : name);
+
+        String response = String.format(template, name == null ? "user" : name);
+
+        if (name == null)
+            name = "NO_NAME";
+
+        namesCounter.put(name, namesCounter.getOrDefault(name, 0) + 1);
 
         logger.info("Logging INFO with Logback");
         logger.severe("Logging ERROR with Logback");
@@ -45,7 +53,7 @@ public class HelloGcpApplication {
         reportError(projectId);
         reportSpan(projectId);
 
-        return respones;
+        return response;
     }
 
     private void reportSpan(String projectId) {
@@ -75,9 +83,9 @@ public class HelloGcpApplication {
 
             // Prepares the metric descriptor
             Map<String, String> metricLabels = new HashMap<>();
-            metricLabels.put("store_id", "Pittsburg");
+            namesCounter.keySet().forEach((k) -> metricLabels.put("name_id", k));
             Metric metric = Metric.newBuilder()
-                    .setType("custom.googleapis.com/stores/daily_sales")
+                    .setType("custom.googleapis.com/names/requests")
                     .putAllLabels(metricLabels)
                     .build();
 
@@ -95,6 +103,7 @@ public class HelloGcpApplication {
                     .setResource(resource)
                     .addAllPoints(pointList)
                     .build();
+
             List<TimeSeries> timeSeriesList = new ArrayList<>();
             timeSeriesList.add(timeSeries);
 
