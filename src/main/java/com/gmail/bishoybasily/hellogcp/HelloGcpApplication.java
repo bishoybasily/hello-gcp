@@ -59,7 +59,7 @@ public class HelloGcpApplication {
             reportErrorsServiceClient.reportErrorEvent(projectName, reportedErrorEvent);
 
         } catch (Exception e) {
-            logger.log(Level.SEVERE, "Exception encountered logging custom event", e);
+            logger.log(Level.SEVERE, "Exception dealing with stackdriver", e);
         }
 
         return respones;
