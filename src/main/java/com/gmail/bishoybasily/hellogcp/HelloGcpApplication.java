@@ -17,7 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -122,13 +125,6 @@ public class HelloGcpApplication {
                 .setResource(resource)
                 .addAllPoints(pointList)
                 .build();
-    }
-
-    private Double getRandomValue() {
-        double rangeMin = 100, rangeMax = 200;
-
-        Random r = new Random();
-        return rangeMin + (rangeMax - rangeMin) * r.nextDouble();
     }
 
     private void reportError(String projectId) {
