@@ -39,18 +39,19 @@ public class HelloGcpApplication {
     public String hello(@RequestParam(required = false, value = "name") String name) {
         String respones = String.format(template, name == null ? "user" : name);
 
-        if (name == null)
-            name = "NO_NAME";
+        if (name != null) {
 
-        namesCounter.put(name, namesCounter.getOrDefault(name, 0L) + 1L);
+            namesCounter.put(name, namesCounter.getOrDefault(name, 0L) + 1L);
 
-        logger.info("Logging INFO with Logback");
-        logger.severe("Logging ERROR with Logback");
+            logger.info("Logging INFO with Logback");
+            logger.severe("Logging ERROR with Logback");
 
-        String projectId = ServiceOptions.getDefaultProjectId();
+            String projectId = ServiceOptions.getDefaultProjectId();
 
-        reportError(projectId);
-        reportSpan(projectId);
+            reportError(projectId);
+            reportSpan(projectId);
+
+        }
 
         return respones;
     }
