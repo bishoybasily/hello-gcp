@@ -34,30 +34,29 @@ public class HelloGcpApplication {
         logger.info("Logging INFO with Logback");
         logger.severe("Logging ERROR with Logback");
 
-
         String projectId = ServiceOptions.getDefaultProjectId();
         ProjectName projectName = ProjectName.of(projectId);
 
         // Instantiate an Error Reporting Client
         try (ReportErrorsServiceClient reportErrorsServiceClient = ReportErrorsServiceClient.create()) {
 
-            SourceLocation myMethod = SourceLocation.newBuilder()
+            SourceLocation sourceLocation = SourceLocation.newBuilder()
                     .setFilePath("Test.java")
                     .setLineNumber(10)
-                    .setFunctionName("myMethod")
+                    .setFunctionName("sourceLocation")
                     .build();
 
             ErrorContext errorContext = ErrorContext.newBuilder()
-                    .setReportLocation(myMethod)
+                    .setReportLocation(sourceLocation)
                     .build();
 
-            ReportedErrorEvent customErrorEvent = ReportedErrorEvent.getDefaultInstance()
+            ReportedErrorEvent reportedErrorEvent = ReportedErrorEvent.getDefaultInstance()
                     .toBuilder()
                     .setMessage("custom error event")
                     .setContext(errorContext)
                     .build();
 
-            reportErrorsServiceClient.reportErrorEvent(projectName, customErrorEvent);
+            reportErrorsServiceClient.reportErrorEvent(projectName, reportedErrorEvent);
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception encountered logging custom event", e);
