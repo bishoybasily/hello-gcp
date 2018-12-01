@@ -59,7 +59,7 @@ public class HelloGcpApplication {
                     .setEndTime(Timestamps.fromMillis(System.currentTimeMillis()))
                     .build();
 
-            double randomValue = getRandomValue();
+            Double randomValue = getRandomValue();
 
             TypedValue value = TypedValue.newBuilder()
                     .setDoubleValue(randomValue)
@@ -113,7 +113,7 @@ public class HelloGcpApplication {
         }
     }
 
-    private double getRandomValue() {
+    private Double getRandomValue() {
         double rangeMin = 100, rangeMax = 200;
 
         Random r = new Random();
