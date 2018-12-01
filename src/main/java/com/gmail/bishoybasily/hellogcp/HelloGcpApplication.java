@@ -33,17 +33,16 @@ public class HelloGcpApplication {
 
     private String template = "Hello, %s";
 
-    private Map<String, Integer> namesCounter = new HashMap<>();
+    private Map<String, Long> namesCounter = new HashMap<>();
 
     @GetMapping
     public String hello(@RequestParam(required = false, value = "name") String name) {
-
-        String response = String.format(template, name == null ? "user" : name);
+        String respones = String.format(template, name == null ? "user" : name);
 
         if (name == null)
             name = "NO_NAME";
 
-        namesCounter.put(name, namesCounter.getOrDefault(name, 0) + 1);
+        namesCounter.put(name, namesCounter.getOrDefault(name, 0L) + 1L);
 
         logger.info("Logging INFO with Logback");
         logger.severe("Logging ERROR with Logback");
@@ -53,7 +52,7 @@ public class HelloGcpApplication {
         reportError(projectId);
         reportSpan(projectId);
 
-        return response;
+        return respones;
     }
 
     private void reportSpan(String projectId) {
@@ -62,50 +61,9 @@ public class HelloGcpApplication {
 
         try (MetricServiceClient metricServiceClient = MetricServiceClient.create()) {
 
-            // Prepares an individual data point
-            TimeInterval interval = TimeInterval.newBuilder()
-                    .setEndTime(Timestamps.fromMillis(System.currentTimeMillis()))
-                    .build();
-
-            Double randomValue = getRandomValue();
-
-            TypedValue value = TypedValue.newBuilder()
-                    .setDoubleValue(randomValue)
-                    .build();
-
-            Point point = Point.newBuilder()
-                    .setInterval(interval)
-                    .setValue(value)
-                    .build();
-
-            List<Point> pointList = new ArrayList<>();
-            pointList.add(point);
-
-            // Prepares the metric descriptor
-            Map<String, String> metricLabels = new HashMap<>();
-            namesCounter.keySet().forEach((k) -> metricLabels.put("name_id", k));
-            Metric metric = Metric.newBuilder()
-                    .setType("custom.googleapis.com/names/requests")
-                    .putAllLabels(metricLabels)
-                    .build();
-
-            // Prepares the monitored resource descriptor
-            Map<String, String> resourceLabels = new HashMap<>();
-            resourceLabels.put("project_id", projectId);
-            MonitoredResource resource = MonitoredResource.newBuilder()
-                    .setType("global")
-                    .putAllLabels(resourceLabels)
-                    .build();
-
-            // Prepares the time series request
-            TimeSeries timeSeries = TimeSeries.newBuilder()
-                    .setMetric(metric)
-                    .setResource(resource)
-                    .addAllPoints(pointList)
-                    .build();
-
             List<TimeSeries> timeSeriesList = new ArrayList<>();
-            timeSeriesList.add(timeSeries);
+
+            namesCounter.forEach((s, aLong) -> timeSeriesList.add(getTimeSeries(projectId, s, aLong)));
 
             CreateTimeSeriesRequest request = CreateTimeSeriesRequest.newBuilder()
                     .setName(projectName.toString())
@@ -120,6 +78,49 @@ public class HelloGcpApplication {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception dealing with stackdriver", e);
         }
+    }
+
+    private TimeSeries getTimeSeries(String projectId, String pittsburg, Long randomValue) {
+        // Prepares an individual data point
+        TimeInterval interval = TimeInterval.newBuilder()
+                .setEndTime(Timestamps.fromMillis(System.currentTimeMillis()))
+                .build();
+
+        TypedValue value = TypedValue.newBuilder()
+                .setInt64Value(randomValue)
+                .build();
+
+        Point point = Point.newBuilder()
+                .setInterval(interval)
+                .setValue(value)
+                .build();
+
+        List<Point> pointList = new ArrayList<>();
+        pointList.add(point);
+
+        // Prepares the metric descriptor
+        Map<String, String> metricLabels = new HashMap<>();
+
+        metricLabels.put("name_id", pittsburg);
+        Metric metric = Metric.newBuilder()
+                .setType("custom.googleapis.com/names/requests")
+                .putAllLabels(metricLabels)
+                .build();
+
+        // Prepares the monitored resource descriptor
+        Map<String, String> resourceLabels = new HashMap<>();
+        resourceLabels.put("project_id", projectId);
+        MonitoredResource resource = MonitoredResource.newBuilder()
+                .setType("global")
+                .putAllLabels(resourceLabels)
+                .build();
+
+        // Prepares the time series request
+        return TimeSeries.newBuilder()
+                .setMetric(metric)
+                .setResource(resource)
+                .addAllPoints(pointList)
+                .build();
     }
 
     private Double getRandomValue() {
