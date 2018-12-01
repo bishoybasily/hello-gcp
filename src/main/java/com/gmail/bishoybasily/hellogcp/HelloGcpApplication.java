@@ -63,7 +63,6 @@ public class HelloGcpApplication {
             logger.log(Level.SEVERE, "Exception encountered logging custom event", e);
         }
 
-
         return respones;
     }
 
