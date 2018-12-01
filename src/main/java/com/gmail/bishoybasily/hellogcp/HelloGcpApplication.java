@@ -56,7 +56,6 @@ public class HelloGcpApplication {
 
         ProjectName projectName = ProjectName.of(projectId);
 
-
         try (MetricServiceClient metricServiceClient = MetricServiceClient.create()) {
 
             // Prepares an individual data point
@@ -75,7 +74,6 @@ public class HelloGcpApplication {
 
             List<Point> pointList = new ArrayList<>();
             pointList.add(point);
-
 
             // Prepares the metric descriptor
             Map<String, String> metricLabels = new HashMap<>();
@@ -110,7 +108,7 @@ public class HelloGcpApplication {
             // Writes time series data
             metricServiceClient.createTimeSeries(request);
 
-            System.out.printf("Done writing time series data.%n");
+            logger.info("Done writing time series");
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Exception dealing with stackdriver", e);
