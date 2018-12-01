@@ -103,7 +103,7 @@ public class HelloGcpApplication {
 
         metricLabels.put("name_id", pittsburg);
         Metric metric = Metric.newBuilder()
-                .setType("custom.googleapis.com/names/requests")
+                .setType("custom.googleapis.com/names/counts")
                 .putAllLabels(metricLabels)
                 .build();
 
